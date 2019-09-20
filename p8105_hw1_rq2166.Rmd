@@ -1,0 +1,153 @@
+---
+title: "p8105_hw1_rq2166"
+author: "Ruoyuan Qian"
+date: "2019/9/19"
+output: github_document
+---
+
+# Problem 1
+
+create data frame
+```{r create data frame}
+
+library(tidyverse)
+library(ggplot2)
+set.seed(961223)
+
+df <- tibble( ran  = rnorm(8),
+              logic= ran > 0 ,
+              char = c("I", "l", "o", "v",
+                       "e", "d","s","!"),
+              fact = factor(c(rep(1,3),
+                              rep(2,4),
+                              rep(3,1))))
+
+#calculate means
+pull(df,ran) %>% 
+mean()
+
+pull(df,logic) %>% 
+mean()
+
+pull(df,char) %>% 
+mean()
+
+pull(df,fact) %>% 
+mean()
+```
+
+define as numeric
+```{r define as numeric, eval=FALSE}
+
+pull(df,logic) %>% 
+as.numeric()
+
+pull(df,char) %>% 
+as.numeric()
+
+
+pull(df,fact) %>% 
+as.numeric()
+
+```
+
+In problem one, when I try to take the mean of each variable, the logical vector and random vector work, but the charater vector and the factor vector display warnings and get "NA" results.
+
+
+When I use `as.numeric()` function to change the them into numeric vectors, the logical vector and factor vector work, but sill displaying warnings in charactor vector. Since factor vector saves its contet as numbers based on different levels, as a reslut, it can be changed as numeric one. 
+
+
+It dose explain the failure in calculating the mean in charactor and factor vectors, since they are initially defined as charactors, which is impossible to determine the means. That's why there are warnings and "NA"s in them.
+
+
+logical vector converting
+```{r convert logical vector}
+
+#covert logical vector to numric vetor 
+
+ pull(df,logic) %>% 
+ as.numeric() *  pull(df,ran)
+
+#covert logical vector to factor vetor 
+ 
+ pull(df,logic) %>% 
+ as.factor() *  pull(df,ran)
+ 
+
+#covert logical vector to factor and then convert result
+  pull(df,logic) %>% 
+  as.factor() %>% 
+  as.numeric() * pull(df,ran)
+
+
+```
+
+# Problem 2
+
+create data frame and make description
+```{r Problem 2 descript data frame}
+
+df2 <- tibble(x = rnorm(500),
+              y = rnorm(500),
+              logic = x + y > 1,
+              nume  = as.numeric(logic),
+              fac   = as.factor (logic))
+
+
+x_sum <- tibble( nrow = nrow(df2),
+                 ncol = ncol(df2),
+                 x_mean   = mean(df2$x),
+                 x_median = median(df2$x),
+                 x_SD     = sd(df2$x) )
+
+
+pull(df2,logic) %>%
+table() %>% 
+prop.table() 
+x_sum
+
+```
+
+draw plots
+```{r Problem 2 draw plot}
+
+ ggplot( df2, aes(x, y, color = logic)) + 
+  geom_point(size = 1.0, shape = 16)    + 
+  labs(  title = "scatterplot of y vs x",
+         x     = "x",
+         y     = "y")
+
+ ggplot( df2, aes(x, y, color = nume)) +
+  geom_point(size = 1.0, shape = 16)   +
+  labs(  title    = "scatterplot of y vs x",
+         x        = "x",
+         y        = "y")
+ 
+ ggplot( df2, aes(x, y,color = fac)) + 
+  geom_point(size = 1.0, shape = 16) +
+  labs(  title    = "scatterplot of y vs x",
+         x        = "x",
+         y        = "y")
+
+
+```
+
+save plot 1
+```{r save plot 1}
+plot_1 <- 
+  ggplot(df2, 
+         aes(x, y, color = logic)) + 
+  geom_point(size = 1.0)           + 
+  labs(title= "scatterplot of y vs x",
+       x    = "x",
+       y    = "y")
+
+ggsave("plot_1.pdf")
+```
+The color of scales are different based on the different types of variables in `color=`function. 
+
+As for the logical variable, the scale contains just two groups, `TRUE` and `FALSE`. 
+
+As for the numeric variable, the scale is continuous from `0` to `1`.
+
+As for the logical variable, the scale contains just two groups, `TRUE` and `FALSE`, which is same as the first one. 
